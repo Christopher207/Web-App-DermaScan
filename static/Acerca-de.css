@@ -27,7 +27,11 @@
 
 .u-section-1 .u-image-1 {
   min-height: 301px;
+<<<<<<< HEAD
+  background-image: url("ESANUniversity.jpg");
+=======
   background-image: url("static/ESANUniversity.jpg");
+>>>>>>> 538a13864b5488ea9f23dd4e0b5d7e5f0d9dc802
   background-position: 50% 50%;
 }
 
@@ -54,7 +58,11 @@
 
 .u-section-1 .u-image-2 {
   min-height: 301px;
+<<<<<<< HEAD
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url('illu_UNET-08.png');
+=======
   background-image: linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url('static/illu_UNET-08.png');
+>>>>>>> 538a13864b5488ea9f23dd4e0b5d7e5f0d9dc802
   background-position: 50% 50%, 50% 50%;
   background-size: cover, cover;
 }

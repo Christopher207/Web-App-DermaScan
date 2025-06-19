@@ -1,5 +1,9 @@
  .u-section-1 {
+<<<<<<< HEAD
+  background-image: linear-gradient(0deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url('7QL0qxnLADAQI15yESv9HKK81alWAVuHzxh7ZBXRYmCXvSmzHnuvqP8ntF8HwRLD5D0hgmQXNnaypN3jI4drUFLLlJvotzUZ8kjk5tLTHu0RLICF3znxWqAHD4.jpeg');
+=======
   background-image: linear-gradient(0deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url('static/7QL0qxnLADAQI15yESv9HKK81alWAVuHzxh7ZBXRYmCXvSmzHnuvqP8ntF8HwRLD5D0hgmQXNnaypN3jI4drUFLLlJvotzUZ8kjk5tLTHu0RLICF3znxWqAHD4.jpeg');
+>>>>>>> 538a13864b5488ea9f23dd4e0b5d7e5f0d9dc802
   background-position: 50% 50%, 50% 50%;
   background-size: cover, cover;
 }
