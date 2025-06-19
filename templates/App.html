@@ -162,7 +162,8 @@
                                 <div class="fs-3 fw-light text-muted">Segmentación de arrugas y manchas</div>
                                 <h1 class="display-3 fw-bolder mb-5"><span class="text-gradient d-inline" id="prediction"></span></h1>
                                 <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xxl-start mb-3">
-                                    <a id="start-camera" class="btn btn-primary btn-lg px-5 py-3 me-sm-3 fs-6 fw-bolder">Iniciar</a>
+                                    <a id="start-camera" class="u-align-center u-border-none u-btn u-button-style u-palette-1-base u-btn-1">Iniciar</a>
+                                    <button id="download-btn" class="u-align-center u-border-none u-btn u-button-style u-palette-1-base u-btn-1" disabled>Descargar</button>
                                 </div>
                             </div>
                         </div>
@@ -339,11 +340,14 @@
                             predictionText.textContent = 'Segmentación completada!';
                             predictionText.className = 'text-success';
                             startButton.textContent = 'Reiniciar';
+                            document.getElementById('download-btn').disabled = false;
                         } else {
                             alert('Ocurrió un error al segmentar. Por favor, reintenta.');
                             predictionText.textContent = 'Error al segmentar.';
                             predictionText.className = 'text-danger';
                             startButton.textContent = 'Reintentar';
+                            document.getElementById('download-btn').disabled = true;
+
                         }
                     }).catch(error => {
                         console.error('Error fetching segment:', error);
@@ -353,6 +357,7 @@
                         predictionText.textContent = 'Error de conexión.';
                         predictionText.className = 'text-danger';
                         startButton.textContent = 'Reintentar';
+                        document.getElementById('download-btn').disabled = true;
                     });
                 } else {
                     // Reiniciar o Cancelar
@@ -361,6 +366,7 @@
                         camera = null;
                     }
                     cameraActive = false;
+                    document.getElementById('download-btn').disabled = true;
                     startButton.textContent = 'Iniciar';
                     startButton.disabled = false;
                     predictionText.textContent = '';
@@ -370,6 +376,20 @@
                     canvasElement.style.display = 'none'; // Asegurarse que el canvas esté oculto
                     loaderElement.style.display = 'none';
                 }
+            });
+            document.getElementById('download-btn').addEventListener('click', function() {
+                const img = document.getElementById('result-img');
+                const src = img.src;
+                
+                // Crear un enlace temporal
+                const link = document.createElement('a');
+                link.href = src;
+                link.download = 'imagen-descargada.png'; // Puedes cambiar el nombre del archivo aquí
+                
+                // Simular click en el enlace
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             });
         </script>
 </body></html>
