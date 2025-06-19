@@ -33,6 +33,9 @@ def image_to_base64(img):
     b64_img = base64.b64encode(buffer).decode('utf-8')
     return "data:image/png;base64," + b64_img
 
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 # --- Colores para la máscara (si se necesitan en el backend para el overlay) ---
 COLOR_SPOTS = [255, 0, 0]   # Rojo para Manchas
@@ -85,14 +88,23 @@ def segment():
 
     return jsonify({"result": f"data:image/png;base64,{b64_result}"})
 
+@app.route('/index')
+def home():
+    return render_template('index.html')
 
-@app.route('/')
+@app.route('/about')
+def about():
+    return render_template('Acerca-de.html')
+
+@app.route('/contact')
+def contact():
+    return render_template('Contacto.html')
+
+@app.route('/application')
 def application():
     return render_template('App.html')
 
-@app.route('application')
-def application():
-    return render_template('App.html')
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5002)
 #

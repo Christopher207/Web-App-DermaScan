@@ -5,10 +5,14 @@
     <meta name="keywords" content="INTUITIVO">
     <meta name="description" content="">
     <title>App</title>
-    <link rel="stylesheet" href="nicepage.css" media="screen">
-<link rel="stylesheet" href="App.css" media="screen">
-    <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
-    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+    <link rel="stylesheet" href="static/nicepage.css" media="screen">
+    <link rel="stylesheet" href="static/App.css" media="screen">
+    <link href="../static/styles.css" rel="stylesheet" />
+    <script class="u-script" type="text/javascript" src="templates/jquery.js" defer=""></script>
+    <script class="u-script" type="text/javascript" src="templates/nicepage.js" defer=""></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/face_detection.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
     <meta name="generator" content="Nicepage 7.9.4, nicepage.com">
     
     
@@ -23,10 +27,96 @@
     <meta name="theme-color" content="#478ac9">
     <meta property="og:title" content="App">
     <meta property="og:type" content="website">
-  <meta data-intl-tel-input-cdn-path="intlTelInput/"></head>
+  <meta data-intl-tel-input-cdn-path="intlTelInput/">
+<style>
+            /* El div '.profile' debe tener una altura definida o crecer con su contenido */
+            /* Es el contenedor principal para el video/imagen */
+            #prediction {
+                font-size: 2rem; /* Tamaño más pequeño */
+                margin-bottom: 0.5rem;
+                background-color: transparent !important;
+                display: block;
+                min-height: 2rem;
+            }
+            .profile {
+                position: relative; /* Asegura que los hijos absolutos se posicionen con respecto a este */
+                width: 100%; /* Haz que ocupe el ancho disponible de su columna */
+                padding-bottom: 75%; /* Esto hace que el div sea 4:3 (altura = 75% de su ancho), para video/canvas */
+                height: 0; /* Reinicia la altura ya que padding-bottom la manejará */
+                overflow: hidden; /* Muy importante para que los elementos hijos no se salgan */
+                border-radius: 30px; /* Mantén los bordes redondeados */
+                display: flex; /* Para centrar el spinner si es necesario */
+                justify-content: center;
+                align-items: center;
+                background-color: #333; /* Fondo oscuro mientras carga o si el video está oculto */
+            }
+
+            #video-container {
+                position: absolute; /* Ocupa todo el espacio del .profile */
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                display: flex; /* Para centrar el spinner dentro de este contenedor */
+                justify-content: center;
+                align-items: center;
+            }
+
+            #video,
+            #canvas,
+            #result-img {
+                position: absolute; /* Se posicionan sobre el video-container */
+                top: 0;
+                left: 0;
+                width: 100%; /* Ocupan todo el ancho del video-container */
+                height: 100%; /* Ocupan toda la altura del video-container */
+                object-fit: cover; /* Ajusta el contenido sin salirse y manteniendo la proporción */
+                border-radius: 30px; /* Mantiene los bordes redondeados */
+                display: block; /* Asegura que ocupen el espacio cuando estén visibles */
+            }
+
+            #capture-box {
+                position: absolute;
+                border: 3px dashed white;
+                /* Usar porcentajes relativos al video-container */
+                width: 40%;
+                height: 50%;
+                /* Centrar la caja de captura */
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%); /* Centrado perfecto */
+                pointer-events: none;
+                z-index: 10;
+            }
+
+            /* Estilos para el spinner de carga */
+            .loader {
+                border: 8px solid #f3f3f3; /* Light grey */
+                border-top: 8px solid #3498db; /* Blue */
+                border-radius: 50%;
+                width: 60px;
+                height: 60px;
+                animation: spin 2s linear infinite;
+                display: none; /* Oculto por defecto */
+                z-index: 20; /* Para que esté por encima de todo */
+                /* Asegurarse de que el loader esté centrado en el #video-container */
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+
+
+</head>
   <body data-path-to-root="./" data-include-products="false" class="u-body u-xl-mode" data-lang="es"><header class="u-clearfix u-header u-header" id="header"><div class="u-clearfix u-sheet u-valign-middle-lg u-valign-middle-md u-valign-middle-sm u-valign-middle-xs u-sheet-1">
-        <a href="#" class="u-image u-logo u-image-1" data-image-width="1536" data-image-height="666">
-          <img src="images/Applogotype.png" class="u-logo-image u-logo-image-1">
+        <a href="/" class="u-image u-logo u-image-1" data-image-width="1536" data-image-height="666">
+          <img src="static/Applogotype.png" class="u-logo-image u-logo-image-1">
         </a>
         <nav class="u-menu u-menu-one-level u-offcanvas u-menu-1" role="navigation" aria-label="Menu navigation">
           <div class="menu-collapse" style="font-size: 1rem; letter-spacing: 0px;">
@@ -37,10 +127,10 @@
             </a>
           </div>
           <div class="u-custom-menu u-nav-container">
-            <ul class="u-nav u-unstyled u-nav-1" role="menubar"><li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="./" style="padding: 10px 20px;">Home</a>
-</li><li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="Acerca-de.html" style="padding: 10px 20px;">About</a>
-</li><li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="Contacto.html" style="padding: 10px 20px;">Contact</a>
-</li><li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="App.html" style="padding: 10px 20px;">Try Now</a>
+            <ul class="u-nav u-unstyled u-nav-1" role="menubar"><li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="index" style="padding: 10px 20px;">Home</a>
+</li><li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="about" style="padding: 10px 20px;">About</a>
+</li><li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="contact" style="padding: 10px 20px;">Contact</a>
+</li><li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link u-text-active-palette-1-base u-text-hover-palette-2-base" href="application" style="padding: 10px 20px;">Try Now</a>
 </li></ul>
           </div>
           <div class="u-custom-menu u-nav-container-collapse" id="cbbf" role="region" aria-label="Menu panel">
@@ -48,32 +138,49 @@
               <div class="u-inner-container-layout u-sidenav-overflow">
                 <div class="u-menu-close" tabindex="-1" aria-label="Close menu"></div>
                 <ul class="u-align-center u-nav u-popupmenu-items u-unstyled u-nav-2" role="menubar"><li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link" href="./">Home</a>
-</li><li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link" href="Acerca-de.html">About</a>
-</li><li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link" href="Contacto.html">Contact</a>
-</li><li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link" href="App.html">Try Now</a>
+</li><li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link" href="about">About</a>
+</li><li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link" href="contact">Contact</a>
+</li><li role="none" class="u-nav-item"><a role="menuitem" class="u-button-style u-nav-link" href="application">Try Now</a>
 </li></ul>
               </div>
             </div>
             <div class="u-black u-menu-overlay u-opacity u-opacity-70"></div>
           </div>
         </nav>
-        <a href="" class="u-image u-logo u-image-2" data-image-width="984" data-image-height="225">
-          <img src="images/Appname.png" class="u-logo-image u-logo-image-2">
+        <a href="/" class="u-image u-logo u-image-2" data-image-width="984" data-image-height="225">
+          <img src="static/Appname.png" class="u-logo-image u-logo-image-2">
         </a>
       </div></header>
     <section class="u-align-center u-clearfix u-container-align-center u-gradient u-image u-section-1" id="block-3" data-image-width="5010" data-image-height="3200">
       <div class="u-clearfix u-sheet u-valign-middle u-sheet-1">
         <div class="data-layout-selected u-clearfix u-expanded-width u-layout-wrap u-layout-wrap-1">
-          <div class="u-layout">
-            <div class="u-layout-row">
-              <div class="u-container-style u-layout-cell u-size-30 u-layout-cell-1">
-                <div class="u-container-layout u-container-layout-1"></div>
-              </div>
-              <div class="u-container-style u-layout-cell u-size-30 u-layout-cell-2">
-                <div class="u-container-layout u-container-layout-2"></div>
-              </div>
-            </div>
-          </div>
+          <div class="container px-5 pb-5">
+                    <div class="row gx-5 align-items-center">
+                        <div class="col-xxl-5">
+                            <div class="text-center text-xxl-start">
+                                <div class="badge bg-gradient-primary-to-secondary text-white mb-4"><div class="text-uppercase">Development</div></div>
+                                <div class="fs-3 fw-light text-muted">Segmentación de arrugas y manchas</div>
+                                <h1 class="display-3 fw-bolder mb-5"><span class="text-gradient d-inline" id="prediction"></span></h1>
+                                <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xxl-start mb-3">
+                                    <a id="start-camera" class="btn btn-primary btn-lg px-5 py-3 me-sm-3 fs-6 fw-bolder">Iniciar</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xxl-7">
+                            <div class="d-flex justify-content-center mt-5 mt-xxl-0" style="position: relative;">
+                                <div class="profile bg-gradient-primary-to-secondary">
+                                    <div id="video-container">
+                                        <video id="video" autoplay muted playsinline></video>
+                                        <canvas id="canvas" style="display:none;"></canvas>
+                                        <div id="capture-box"></div>
+                                        <div id="loader" class="loader"></div>
+                                        <img id="result-img" src="" alt="Resultado" style="display: none;" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
         </div>
       </div>
     </section>
@@ -84,5 +191,185 @@
         <p class="u-align-justify u-small-text u-text u-text-variant u-text-1"> Ormeño Salazar, V. M., &amp; Sandoval Díaz, J. J. (2025).&nbsp;Segmentación de características morfológicas faciales usando redes neuronales convolucionales: Enfoque en arrugas y manchas&nbsp;[Tesis de bachiller, Universidad ESAN].</p>
       </div></footer>
     <section class="u-backlink u-clearfix u-grey-80"></section>
-  
+    <script>
+            const videoElement = document.getElementById('video');
+            const canvasElement = document.getElementById('canvas');
+            const canvasCtx = canvasElement.getContext('2d');
+            const predictionText = document.getElementById('prediction');
+            const startButton = document.getElementById('start-camera');
+            const resultImg = document.getElementById('result-img');
+            const boundingBox = document.getElementById('capture-box');
+            const loaderElement = document.getElementById('loader');
+            let camera = null;
+            let ready = false;
+            let cameraActive = false;
+
+            // Define los umbrales de tamaño del rostro en el canvas para la distancia.
+            const MIN_FACE_HEIGHT_RATIO = 0.40;
+            const MAX_FACE_HEIGHT_RATIO = 0.70;
+
+            boundingBox.style.display = 'none';
+
+            const faceDetection = new FaceDetection({
+                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`
+            });
+
+            faceDetection.setOptions({
+                model: 'short',
+                minDetectionConfidence: 0.7
+            });
+
+            // Ajustar el tamaño del canvas dinámicamente según el video
+            videoElement.addEventListener('loadedmetadata', () => {
+                canvasElement.width = videoElement.videoWidth;
+                canvasElement.height = videoElement.videoHeight;
+            });
+
+
+            faceDetection.onResults(results => {
+                if (!cameraActive) return;
+
+                canvasCtx.save();
+                canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+                canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+                if (results.detections.length > 0) {
+                    const face = results.detections[0].boundingBox;
+                    const faceCenterX = face.xCenter * canvasElement.width;
+                    const faceCenterY = face.yCenter * canvasElement.height;
+                    const faceHeight = face.height * canvasElement.height;
+
+                    // Lógica de centrado: Ahora usa porcentajes relativos al canvas
+                    // Asume que la caja de captura es del 40% de ancho y 50% de alto, centrada.
+                    const captureBoxLeft = canvasElement.width * ((100 - 40) / 2) / 100; // 30% del ancho del canvas
+                    const captureBoxRight = canvasElement.width * ((100 + 40) / 2) / 100; // 70% del ancho del canvas
+                    const captureBoxTop = canvasElement.height * ((100 - 50) / 2) / 100; // 25% de la altura del canvas
+                    const captureBoxBottom = canvasElement.height * ((100 + 50) / 2) / 100; // 75% de la altura del canvas
+
+
+                    const withinBox = faceCenterX > captureBoxLeft && faceCenterX < captureBoxRight &&
+                                      faceCenterY > captureBoxTop && faceCenterY < captureBoxBottom;
+
+                    // Lógica de distancia
+                    const minAllowedFaceHeight = (canvasElement.height * MIN_FACE_HEIGHT_RATIO) + 115;
+                    const maxAllowedFaceHeight = (canvasElement.height * MAX_FACE_HEIGHT_RATIO) + 70;
+                    const withinDistance = faceHeight >= minAllowedFaceHeight && faceHeight <= maxAllowedFaceHeight;
+
+                    if (withinBox && withinDistance) {
+                        predictionText.textContent = 'Rostro detectado correctamente y a la distancia adecuada';
+                        predictionText.className = 'text-success';
+                        startButton.textContent = 'Capturar';
+                        ready = true;
+                    } else {
+                        ready = false;
+
+                        if (!withinBox) {
+                            predictionText.textContent = 'Ajusta tu rostro al centro';
+                            predictionText.className = 'text-danger';
+                        } else if (!withinDistance) {
+                            if (faceHeight < minAllowedFaceHeight) {
+                                predictionText.textContent = 'Acércate a la cámara';
+                                predictionText.className = 'text-warning';
+                            } else {
+                                predictionText.textContent = 'Aléjate de la cámara';
+                                predictionText.className = 'text-warning';
+                            }
+                        }
+                        startButton.textContent = 'Cancelar';
+                    }
+                } else {
+                    predictionText.textContent = 'No se detectó rostro';
+                    predictionText.className = 'text-danger';
+                    startButton.textContent = 'Cancelar';
+                    ready = false;
+                }
+
+                canvasCtx.restore();
+            });
+
+            startButton.addEventListener('click', () => {
+                if (!cameraActive && startButton.textContent === 'Iniciar') {
+                    camera = new Camera(videoElement, {
+                        onFrame: async () => {
+                            await faceDetection.send({ image: videoElement });
+                        },
+                        // No es necesario definir width/height aquí si se ajustan en CSS
+                        // y el canvas se ajusta con loadedmetadata
+                    });
+                    camera.start();
+                    cameraActive = true;
+                    startButton.textContent = 'Cancelar';
+                    boundingBox.style.display = 'block';
+                    videoElement.style.display = 'block';
+                    canvasElement.style.display = 'none';
+                    resultImg.style.display = 'none';
+                    loaderElement.style.display = 'none';
+                    predictionText.textContent = '';
+                } else if (ready && startButton.textContent === 'Capturar') {
+                    camera.stop();
+                    cameraActive = false;
+
+                    // Ocultar video y caja de captura
+                    videoElement.style.display = 'none';
+                    boundingBox.style.display = 'none';
+
+                    // Preparar para la captura y mostrar spinner
+                    predictionText.textContent = 'Procesando...';
+                    predictionText.className = 'text-info';
+                    loaderElement.style.display = 'block';
+                    startButton.disabled = true;
+
+                    // Dibujar el último frame en el canvas y obtener la imagen
+                    canvasElement.style.display = 'block'; // Asegúrate de que esté visible para toDataURL
+                    canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+                    const base64Image = canvasElement.toDataURL('image/png');
+                    canvasElement.style.display = 'none'; // Ocultar el canvas inmediatamente después de la captura
+
+                    fetch('/segment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ image: base64Image })
+                    }).then(res => res.json()).then(data => {
+                        loaderElement.style.display = 'none';
+                        startButton.disabled = false;
+
+                        if (data.result) {
+                            resultImg.src = data.result;
+                            resultImg.style.display = 'block'; // Mostrar la imagen de resultado
+                            predictionText.textContent = 'Segmentación completada!';
+                            predictionText.className = 'text-success';
+                            startButton.textContent = 'Reiniciar';
+                        } else {
+                            alert('Ocurrió un error al segmentar. Por favor, reintenta.');
+                            predictionText.textContent = 'Error al segmentar.';
+                            predictionText.className = 'text-danger';
+                            startButton.textContent = 'Reintentar';
+                        }
+                    }).catch(error => {
+                        console.error('Error fetching segment:', error);
+                        loaderElement.style.display = 'none';
+                        startButton.disabled = false;
+                        alert('Error de comunicación con el servidor. Verifica tu conexión.');
+                        predictionText.textContent = 'Error de conexión.';
+                        predictionText.className = 'text-danger';
+                        startButton.textContent = 'Reintentar';
+                    });
+                } else {
+                    // Reiniciar o Cancelar
+                    if (camera) {
+                        camera.stop();
+                        camera = null;
+                    }
+                    cameraActive = false;
+                    startButton.textContent = 'Iniciar';
+                    startButton.disabled = false;
+                    predictionText.textContent = '';
+                    resultImg.style.display = 'none';
+                    boundingBox.style.display = 'none';
+                    videoElement.style.display = 'none'; // Asegurarse que el video esté oculto
+                    canvasElement.style.display = 'none'; // Asegurarse que el canvas esté oculto
+                    loaderElement.style.display = 'none';
+                }
+            });
+        </script>
 </body></html>

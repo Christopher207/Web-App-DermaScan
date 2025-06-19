@@ -1,5 +1,5 @@
  .u-section-1 {
-  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)), url('images/wrinklesegmentation.jpg');
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)), url('static/wrinklesegmentation.jpg');
   background-position: 50% 50%;
 }
 
@@ -94,7 +94,7 @@
 
 .u-section-2 .u-image-1 {
   min-height: 600px;
-  background-image: url("images/FaceSegmentationModel.png");
+  background-image: url("static/FaceSegmentationModel.png");
   background-position: 50% 50%;
 }
 
@@ -203,7 +203,7 @@
 
 .u-section-4 .u-image-1 {
   min-height: 454px;
-  background-image: url("images/brown-spots-1200.webp");
+  background-image: url("static/brown-spots-1200.webp");
   background-position: 16.22% 50%;
   background-size: cover;
 }
